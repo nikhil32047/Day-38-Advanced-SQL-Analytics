@@ -1,0 +1,71 @@
+Advanced SQL Analytics
+
+1. Common Table Expressions (CTEs)
+=================================
+A temporary, named result set that makes queries more readable.
+Syntax uses WITH.
+
+Example:
+
+WITH top_sales AS (
+    SELECT product_id, SUM(sales) AS total_sales
+    FROM orders
+    GROUP BY product_id
+)
+SELECT * FROM top_sales WHERE total_sales > 5000;
+
+
+2. Window Functions – ROW_NUMBER, RANK, DENSE_RANK
+==============================================
+Provide ranking or numbering without collapsing rows.
+
+Example:
+
+SELECT 
+    customer_id, 
+    sales, 
+    RANK() OVER (ORDER BY sales DESC) AS sales_rank
+FROM orders;
+
+
+3. NTILE & Percentile Distribution
+=================================
+NTILE(n) divides rows into n groups.
+Useful for segmentation (e.g., quartiles, deciles).
+
+Example:
+
+SELECT 
+    customer_id, 
+    NTILE(4) OVER (ORDER BY sales DESC) AS sales_quartile
+FROM orders;
+
+
+4. Recursive CTEs
+==================
+Allow queries that reference themselves.
+Useful for hierarchical or tree data (e.g., org charts, category trees).
+
+Example:
+
+WITH RECURSIVE employee_hierarchy AS (
+    SELECT employee_id, manager_id, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+    UNION ALL
+    SELECT e.employee_id, e.manager_id, eh.level + 1
+    FROM employees e
+    JOIN employee_hierarchy eh ON e.manager_id = eh.employee_id
+)
+SELECT * FROM employee_hierarchy;
+
+
+5. Case Study – Customer Segmentation
+==================================
+Task: Use SQL to segment customers into groups (Platinum, Gold, Silver) based on purchase history.
+Combine CTEs + Window Functions + CASE for an advanced query-driven segmentation model.
+
+📊 Takeaway:
+Day 38 focuses on making SQL queries more powerful, reusable, and analytical with CTEs, window functions, NTILE, recursion, and segmentation.
+
+
